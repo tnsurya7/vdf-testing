@@ -31,6 +31,7 @@ public class EmailService {
             log.info("Password setup email sent to: {}", toEmail);
         } catch (Exception e) {
             log.warn("Could not send password setup email to {}: {}", toEmail, e.getMessage());
+            log.info("Password setup link for {}: {}", toEmail, link);
         }
     }
 
@@ -43,6 +44,7 @@ public class EmailService {
             log.info("Password reset email sent to: {}", toEmail);
         } catch (Exception e) {
             log.warn("Could not send password reset email to {}: {}", toEmail, e.getMessage());
+            log.info("Password reset link for {}: {}", toEmail, link);
         }
     }
 
