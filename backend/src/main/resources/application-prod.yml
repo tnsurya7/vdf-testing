@@ -26,6 +26,10 @@ spring:
           starttls:
             enable: true
             required: true
+  security:
+    user:
+      name: disabled
+      password: disabled
 
 server:
   port: ${PORT:8080}
@@ -58,10 +62,3 @@ logging:
   level:
     root: INFO
     com.sidbi.vdf: INFO
-
-# Disable Spring Security default user
-spring:
-  security:
-    user:
-      name: disabled
-      password: disabled
