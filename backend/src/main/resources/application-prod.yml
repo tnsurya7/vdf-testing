@@ -1,0 +1,52 @@
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+
+server:
+  port: ${PORT:8080}
+  error:
+    include-message: always
+    include-stacktrace: never
+
+vdf:
+  app:
+    base-url: ${VDF_APP_BASE_URL}
+  files:
+    storage-path: ${VDF_FILES_STORAGE_PATH:./data/vdf-uploads}
+  jwt:
+    secret: ${VDF_JWT_SECRET}
+    issuer: vdf-backend
+    access-token-validity-minutes: ${VDF_JWT_ACCESS_VALIDITY:60}
+  cors:
+    allowed-origins: ${VDF_CORS_ORIGINS}
+
+logging:
+  level:
+    root: INFO
+    com.sidbi.vdf: INFO

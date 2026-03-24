@@ -1,0 +1,13 @@
+# IMPORTANT: DO NOT commit this file with real credentials!
+# Copy this file and set your local environment variables
+
+$env:SPRING_DATASOURCE_URL="jdbc:postgresql://localhost:5432/vdf"
+$env:SPRING_DATASOURCE_USERNAME="your-db-username"
+$env:SPRING_DATASOURCE_PASSWORD="your-db-password"
+$env:MAIL_USERNAME="your-email@gmail.com"
+$env:MAIL_PASSWORD="your-gmail-app-password"
+$env:VDF_APP_BASE_URL="http://localhost:5173"
+$env:VDF_JWT_SECRET="your-jwt-secret-at-least-256-bits-long"
+$env:VDF_JWT_ACCESS_VALIDITY="480"
+$env:ENVIRONMENT="local"
+mvn spring-boot:run "-Dspring-boot.run.jvmArguments=-Xmx512m -Xms256m"

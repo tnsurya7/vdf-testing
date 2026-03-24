@@ -1,0 +1,19 @@
+# Test profile: in-memory H2, no Flyway (schema created by JPA ddl-auto)
+spring:
+  datasource:
+    url: jdbc:h2:mem:vdf_test;DB_CLOSE_DELAY=-1;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+  flyway:
+    enabled: false
+
+vdf:
+  jwt:
+    secret: test-secret-at-least-256-bits-long-for-hs256
+    access-token-validity-minutes: 60
+    issuer: vdf-backend-test

@@ -1,0 +1,77 @@
+spring:
+  application:
+    name: vdf-backend
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        default_schema: public
+    open-in-view: false
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/vdfnew}
+    username: ${SPRING_DATASOURCE_USERNAME:suryakumar}
+    password: ${SPRING_DATASOURCE_PASSWORD:}
+    driver-class-name: org.postgresql.Driver
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 25MB
+      max-request-size: 25MB
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+
+server:
+  port: ${SERVER_PORT:8080}
+
+# JWT and CORS (override in prod via env)
+vdf:
+  app:
+    base-url: ${VDF_APP_BASE_URL:http://localhost:5173}
+  files:
+    storage-path: ${VDF_FILES_STORAGE_PATH:./data/vdf-uploads}
+  jwt:
+    secret: ${VDF_JWT_SECRET:a-string-secret-at-least-256-bits-long}
+    access-token-validity-minutes: ${VDF_JWT_ACCESS_VALIDITY:60}
+    issuer: vdf-backend
+  cors:
+    allowed-origins: ${VDF_CORS_ORIGINS:http://localhost:5173,http://localhost:3000,http://localhost:8080,http://[::]:8080}
+    allowed-methods: GET,POST,PUT,PATCH,DELETE,OPTIONS
+    allowed-headers: Authorization,Content-Type
+    allow-credentials: true
+
+# OpenAPI / Swagger
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    persist-authorization: true
+
+logging:
+  level:
+    com.sidbi.vdf: DEBUG
+    org.springframework.security: INFO
+    # Uncomment to see which migrations Flyway runs on startup:
+    # org.flywaydb: DEBUG
+    

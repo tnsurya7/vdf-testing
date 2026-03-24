@@ -1,0 +1,22 @@
+# Build
+target/
+
+# IDE
+.idea/
+*.iml
+.project
+.classpath
+.settings/
+.vscode/
+
+# Logs
+*.log
+logs/
+
+# Local / env
+.env
+.env.local
+*.local
+
+# File upload storage (local dev)
+data/vdf-uploads*

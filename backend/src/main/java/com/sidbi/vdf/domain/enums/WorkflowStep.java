@@ -1,0 +1,32 @@
+package com.sidbi.vdf.domain.enums;
+
+public enum WorkflowStep {
+    prelim_review,
+    prelim_submitted,
+    prelim_revision,
+    prelim_rejected,
+    detailed_form,
+    detailed_form_open,
+    detailed_revision,
+    detailed_maker_review,
+    detailed_checker_review,
+    detailed_rejected,
+    icvd_maker_review,
+    icvd_checker_review,
+    icvd_convenor_scheduling,
+    icvd_committee_review,
+    icvd_referred,
+    icvd_note_preparation,
+    ccic_maker_refine,
+    ccic_checker_review,
+    ccic_second_checker_review,
+    ccic_convenor_scheduling,
+    ccic_committee_review,
+    ccic_referred,
+    ccic_maker_sanction,
+    ccic_note_preparation,
+    final_approval,
+    final_rejected,
+    sanctioned,
+    completed
+}

@@ -1,0 +1,31 @@
+# UAT profile. Activate with: spring.profiles.active=uat
+# Set SPRING_DATASOURCE_PASSWORD (and optionally other env vars) in the UAT deployment environment.
+
+spring:
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: jdbc:postgresql://c683rl2u9g20vq.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com:5432/dc8h6uf4ccqtp5?sslmode=require
+    username: uedsqf3rihv1nt
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  flyway:
+    enabled: true
+
+# Override in UAT if needed
+vdf:
+  files:
+    storage-path: ${VDF_FILES_STORAGE_PATH:./data/vdf-uploads}
+  jwt:
+    secret: ${VDF_JWT_SECRET}
+    access-token-validity-minutes: ${VDF_JWT_ACCESS_VALIDITY:60}
+  cors:
+    # Allow any GitHub Pages origin (e.g. https://yourorg.github.io). Override with VDF_CORS_ORIGINS for explicit list.
+    allowed-origin-patterns: ${VDF_CORS_ORIGIN_PATTERNS:https://*.github.io}
+
+logging:
+  level:
+    com.sidbi.vdf: INFO
+    org.springframework.security: WARN

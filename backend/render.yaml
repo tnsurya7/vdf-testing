@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: vdf-backend
+    env: java
+    buildCommand: mvn clean package -DskipTests
+    startCommand: java -jar target/vdf-backend-1.0.0-SNAPSHOT.jar
+    envVars:
+      - key: SPRING_DATASOURCE_URL
+        sync: false
+      - key: SPRING_DATASOURCE_USERNAME
+        sync: false
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false
+      - key: VDF_JWT_SECRET
+        sync: false
+      - key: MAIL_USERNAME
+        sync: false
+      - key: MAIL_PASSWORD
+        sync: false
+      - key: VDF_APP_BASE_URL
+        sync: false
+      - key: VDF_CORS_ORIGINS
+        sync: false
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod

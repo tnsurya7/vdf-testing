@@ -1,0 +1,32 @@
+package com.sidbi.vdf.domain.enums;
+
+public enum WorkflowAction {
+    revert_prelim,
+    reject_prelim,
+    approve_prelim,
+    revert_detailed,
+    recommend_rejection,
+    recommend_pursual,
+    reject_final,
+    recommend_icvd,
+    recommend_ccic,
+    icvd_maker_forward,
+    icvd_checker_assign_convenor,
+    icvd_schedule_meeting,
+    icvd_committee_refer,
+    submit_icvd_note,
+    revert_icvd,
+    approve_icvd,
+    record_committee_decision,
+    ccic_maker_upload,
+    ccic_checker_forward_to_checker,
+    ccic_checker_assign_convenor,
+    ccic_schedule_meeting,
+    ccic_committee_refer,
+    ccic_maker_sanction,
+    submit_ccic_note,
+    revert_ccic,
+    approve_ccic,
+    approve_sanction,
+    reject_sanction
+}
