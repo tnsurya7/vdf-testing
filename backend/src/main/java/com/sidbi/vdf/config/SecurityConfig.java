@@ -33,12 +33,12 @@ public class SecurityConfig {
             .exceptionHandling(e -> e.authenticationEntryPoint(jwtAuthenticationEntryPoint))
             .authorizeHttpRequests(a -> a
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .requestMatchers("/api/fix/**").permitAll()
                 .requestMatchers("/auth/login", "/auth/login/").permitAll()
                 .requestMatchers("/auth/forgot-password", "/auth/set-password").permitAll()
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                 .requestMatchers("/api/public/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/registrations").permitAll()
-                .requestMatchers("/api/fix/**").permitAll()
                 .requestMatchers("/auth/**", "/api/**").authenticated()
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
