@@ -1,6 +1,10 @@
 spring:
   application:
     name: vdf-backend
+  security:
+    user:
+      name: disabled
+      password: disabled
   jpa:
     hibernate:
       ddl-auto: update

@@ -58,3 +58,10 @@ logging:
   level:
     root: INFO
     com.sidbi.vdf: INFO
+
+# Disable Spring Security default user
+spring:
+  security:
+    user:
+      name: disabled
+      password: disabled
