@@ -7,7 +7,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Entity
-@Table(name = "VDF_application_file")
+@Table(name = "vdf_application_file")
 @Getter
 @Setter
 @NoArgsConstructor

@@ -8,7 +8,7 @@ import lombok.*;
 import java.util.UUID;
 
 @Entity
-@Table(name = "VDF_user_account")
+@Table(name = "vdf_user_account")
 @Getter
 @Setter
 @NoArgsConstructor

@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "VDF_committee_meeting")
+@Table(name = "vdf_committee_meeting")
 @Getter
 @Setter
 @NoArgsConstructor

@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Entity
-@Table(name = "VDF_application")
+@Table(name = "vdf_application")
 @Getter
 @Setter
 @NoArgsConstructor

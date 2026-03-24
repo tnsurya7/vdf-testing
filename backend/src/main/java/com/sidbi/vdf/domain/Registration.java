@@ -9,7 +9,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Entity
-@Table(name = "VDF_registration")
+@Table(name = "vdf_registration")
 @Getter
 @Setter
 @NoArgsConstructor
