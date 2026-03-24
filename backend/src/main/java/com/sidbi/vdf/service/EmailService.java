@@ -18,18 +18,31 @@ import java.io.IOException;
 public class EmailService {
 
     private final SendGrid sendGrid;
+    private final String fromEmail;
+    private final String fromName;
 
     @Value("${vdf.app.base-url:http://localhost:5173}")
     private String baseUrl;
 
-    @Value("${sendgrid.from-email:noreply@sidbi.in}")
-    private String fromEmail;
-
-    @Value("${sendgrid.from-name:SIDBI VDF Portal}")
-    private String fromName;
-
-    public EmailService(@Value("${sendgrid.api-key:}") String apiKey) {
+    public EmailService() {
+        String apiKey = System.getenv("SENDGRID_API_KEY");
+        if (apiKey == null || apiKey.isEmpty()) {
+            apiKey = ""; // Fallback for local dev
+            log.warn("SENDGRID_API_KEY not set - email sending will fail");
+        }
         this.sendGrid = new SendGrid(apiKey);
+        
+        this.fromEmail = System.getenv("SENDGRID_FROM_EMAIL");
+        if (this.fromEmail == null || this.fromEmail.isEmpty()) {
+            throw new IllegalStateException("SENDGRID_FROM_EMAIL environment variable must be set");
+        }
+        
+        this.fromName = System.getenv("SENDGRID_FROM_NAME");
+        if (this.fromName == null || this.fromName.isEmpty()) {
+            throw new IllegalStateException("SENDGRID_FROM_NAME environment variable must be set");
+        }
+        
+        log.info("EmailService initialized with SendGrid - From: {} <{}>", fromName, fromEmail);
     }
 
     public void sendPasswordSetupEmail(String toEmail, String name, String token) {
@@ -69,12 +82,20 @@ public class EmailService {
             request.setMethod(Method.POST);
             request.setEndpoint("mail/send");
             request.setBody(mail.build());
+            
+            log.debug("Sending email from {} to {} with subject: {}", fromEmail, to, subject);
             Response response = sendGrid.api(request);
             
+            log.debug("SendGrid response: {} - {}", response.getStatusCode(), response.getBody());
+            
             if (response.getStatusCode() >= 400) {
+                log.error("SendGrid API error: {} - {}", response.getStatusCode(), response.getBody());
                 throw new IOException("SendGrid API error: " + response.getStatusCode() + " - " + response.getBody());
             }
+            
+            log.info("Email sent successfully to {} (status: {})", to, response.getStatusCode());
         } catch (IOException ex) {
+            log.error("Failed to send email to {}: {}", to, ex.getMessage());
             throw ex;
         }
     }
