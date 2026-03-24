@@ -34,6 +34,15 @@ server:
     include-message: always
     include-stacktrace: never
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: when-authorized
+
 vdf:
   app:
     base-url: ${VDF_APP_BASE_URL}
