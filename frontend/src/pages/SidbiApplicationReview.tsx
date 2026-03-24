@@ -38,6 +38,37 @@ const SidbiApplicationReview = () => {
   const session = getSession();
   const sidbiRole = session?.sidbiRole ?? "maker";
 
+  // Helper functions for file download and preview
+  const downloadFile = async (fileId: string, fileName: string) => {
+    try {
+      const token = session?.token || localStorage.getItem("token");
+      const baseUrl = import.meta.env.VITE_API_BASE_URL || "";
+      const response = await fetch(`${baseUrl}/api/files/${fileId}/download`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!response.ok) throw new Error("Download failed");
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      toast({ title: "Download Started", description: `${fileName} download initiated.` });
+    } catch (error) {
+      toast({ title: "Download Failed", description: "Could not download file.", variant: "destructive" });
+    }
+  };
+
+  const previewFile = (fileId: string) => {
+    const token = session?.token || localStorage.getItem("token");
+    const baseUrl = import.meta.env.VITE_API_BASE_URL || "";
+    const url = `${baseUrl}/api/files/${fileId}/download?token=${encodeURIComponent(token || "")}`;
+    window.open(url, "_blank");
+  };
+
   const { data: app, isLoading } = useGetApplicationByIdQuery(id!, { skip: !id || !session || (session.roles?.length === 0) });
   const [applyAction, { isLoading: isApplying }] = useApplyWorkflowActionMutation();
   const { data: allUsers = [] } = useGetUsersQuery();
@@ -223,7 +254,8 @@ const SidbiApplicationReview = () => {
         <>
           <div className="space-y-2 mb-4">
             <Label className="font-semibold text-xs uppercase tracking-wide text-muted-foreground">IC-VD Note</Label>
-            <Button variant="outline" className="w-full font-bold uppercase tracking-wider text-xs" onClick={() => toast({ title: "Download Started", description: "IC-VD Note download initiated." })}>
+            <Button variant="outline" className="w-full font-bold uppercase tracking-wider text-xs" 
+              onClick={() => app.icvdNote?.id && downloadFile(app.icvdNote.id, `IC-VD_Note_${app.id.slice(0, 8)}.pdf`)}>
               Download IC-VD Note
             </Button>
           </div>
@@ -240,7 +272,8 @@ const SidbiApplicationReview = () => {
     if ((step === "icvd_maker_review" || step === "icvd_note_preparation") && role === "maker") {
       return (
         <div className="text-center space-y-2">
-          <Button variant="outline" className="w-full font-bold uppercase tracking-wider text-xs" onClick={() => toast({ title: "Download Started", description: "IC-VD Note download initiated." })}>
+          <Button variant="outline" className="w-full font-bold uppercase tracking-wider text-xs" 
+            onClick={() => app.icvdNote?.id && downloadFile(app.icvdNote.id, `IC-VD_Note_${app.id.slice(0, 8)}.pdf`)}>
             Download IC-VD Note
           </Button>
           <p className="text-xs text-muted-foreground">Review and forward the IC-VD Note to Checker.</p>
@@ -256,7 +289,10 @@ const SidbiApplicationReview = () => {
         <>
           <div className="space-y-2 mb-4">
             <Label className="font-semibold text-xs uppercase tracking-wide text-muted-foreground">IC-VD Note</Label>
-            <Button variant="outline" className="w-full font-bold uppercase tracking-wider text-xs" onClick={() => toast({ title: "Download Started" })}>Download IC-VD Note</Button>
+            <Button variant="outline" className="w-full font-bold uppercase tracking-wider text-xs" 
+              onClick={() => app.icvdNote?.id && downloadFile(app.icvdNote.id, `IC-VD_Note_${app.id.slice(0, 8)}.pdf`)}>
+              Download IC-VD Note
+            </Button>
           </div>
           <div className="space-y-2 mb-4">
             <Label className="font-semibold text-xs uppercase tracking-wide text-muted-foreground">Assign Convenor</Label>
@@ -281,7 +317,8 @@ const SidbiApplicationReview = () => {
         <div className="space-y-4">
           <div className="space-y-2">
             <Label className="font-semibold text-xs uppercase tracking-wide text-muted-foreground">Download IC-VD Note</Label>
-            <Button variant="outline" className="w-full font-bold uppercase tracking-wider text-xs" onClick={() => toast({ title: "Download Started" })}>
+            <Button variant="outline" className="w-full font-bold uppercase tracking-wider text-xs" 
+              onClick={() => app.icvdNote?.id && downloadFile(app.icvdNote.id, `IC-VD_Note_${app.id.slice(0, 8)}.pdf`)}>
               Download IC-VD Note
             </Button>
           </div>
@@ -314,7 +351,10 @@ const SidbiApplicationReview = () => {
         <>
           <div className="space-y-2 mb-4">
             <Label className="font-semibold text-xs uppercase tracking-wide text-muted-foreground">IC-VD Note</Label>
-            <Button variant="outline" className="w-full font-bold uppercase tracking-wider text-xs" onClick={() => toast({ title: "Download Started" })}>Download IC-VD Note</Button>
+            <Button variant="outline" className="w-full font-bold uppercase tracking-wider text-xs" 
+              onClick={() => app.icvdNote?.id && downloadFile(app.icvdNote.id, `IC-VD_Note_${app.id.slice(0, 8)}.pdf`)}>
+              Download IC-VD Note
+            </Button>
           </div>
           <div className="space-y-2 mb-4">
             <Label className="font-semibold text-xs uppercase tracking-wide text-muted-foreground">Assign Convenor</Label>
@@ -351,7 +391,8 @@ const SidbiApplicationReview = () => {
         <div className="space-y-4">
           <div className="space-y-2">
             <Label className="font-semibold text-xs uppercase tracking-wide text-muted-foreground">CCIC-CGM Note</Label>
-            <Button variant="outline" className="w-full font-bold uppercase tracking-wider text-xs" onClick={() => toast({ title: "Download Started", description: "CCIC-CGM Note download initiated." })}>
+            <Button variant="outline" className="w-full font-bold uppercase tracking-wider text-xs" 
+              onClick={() => app.ccicNote?.id && downloadFile(app.ccicNote.id, `CCIC_CGM_Note_${app.id.slice(0, 8)}.pdf`)}>
               Download CCIC-CGM Note
             </Button>
           </div>
@@ -372,7 +413,10 @@ const SidbiApplicationReview = () => {
         <div className="space-y-2">
           <div className="mb-4">
             <Label className="font-semibold text-xs uppercase tracking-wide text-muted-foreground mb-2 block">IC-VD Note</Label>
-            <Button variant="outline" className="w-full font-bold uppercase tracking-wider text-xs" onClick={() => toast({ title: "Download Started" })}>Download IC-VD Note</Button>
+            <Button variant="outline" className="w-full font-bold uppercase tracking-wider text-xs" 
+              onClick={() => app.icvdNote?.id && downloadFile(app.icvdNote.id, `IC-VD_Note_${app.id.slice(0, 8)}.pdf`)}>
+              Download IC-VD Note
+            </Button>
           </div>
           <Button variant="destructive" className="w-full font-bold uppercase tracking-wider text-xs" disabled={isApplying}
             onClick={() => doAction("reject_sanction", "Sanction Rejected")}>Reject Sanction</Button>
@@ -459,11 +503,11 @@ const SidbiApplicationReview = () => {
                   </div>
                   <div className="flex gap-2 shrink-0">
                     <Button variant="outline" size="sm" className="h-8 text-xs font-bold uppercase tracking-wider gap-1"
-                      onClick={() => toast({ title: "Preview", description: "IC-VD Note preview opened." })}>
+                      onClick={() => app.icvdNote?.id && previewFile(app.icvdNote.id)}>
                       <EyeIcon className="h-3.5 w-3.5" /> Preview
                     </Button>
                     <Button variant="outline" size="sm" className="h-8 text-xs font-bold uppercase tracking-wider gap-1"
-                      onClick={() => toast({ title: "Download Started", description: "IC-VD Note download initiated." })}>
+                      onClick={() => app.icvdNote?.id && downloadFile(app.icvdNote.id, `IC-VD_Note_${app.id.slice(0, 8)}.pdf`)}>
                       <Download className="h-3.5 w-3.5" /> Download
                     </Button>
                   </div>
@@ -483,11 +527,11 @@ const SidbiApplicationReview = () => {
                   </div>
                   <div className="flex gap-2 shrink-0">
                     <Button variant="outline" size="sm" className="h-8 text-xs font-bold uppercase tracking-wider gap-1"
-                      onClick={() => toast({ title: "Preview", description: "CCIC-CGM Note preview opened." })}>
+                      onClick={() => app.ccicNote?.id && previewFile(app.ccicNote.id)}>
                       <EyeIcon className="h-3.5 w-3.5" /> Preview
                     </Button>
                     <Button variant="outline" size="sm" className="h-8 text-xs font-bold uppercase tracking-wider gap-1"
-                      onClick={() => toast({ title: "Download Started", description: "CCIC-CGM Note download initiated." })}>
+                      onClick={() => app.ccicNote?.id && downloadFile(app.ccicNote.id, `CCIC_CGM_Note_${app.id.slice(0, 8)}.pdf`)}>
                       <Download className="h-3.5 w-3.5" /> Download
                     </Button>
                   </div>
