@@ -1,26 +1,36 @@
 package com.sidbi.vdf.service;
 
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
-import lombok.RequiredArgsConstructor;
+import com.sendgrid.Method;
+import com.sendgrid.Request;
+import com.sendgrid.Response;
+import com.sendgrid.SendGrid;
+import com.sendgrid.helpers.mail.Mail;
+import com.sendgrid.helpers.mail.objects.Content;
+import com.sendgrid.helpers.mail.objects.Email;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
 
 @Service
 @Slf4j
-@RequiredArgsConstructor
 public class EmailService {
 
-    private final JavaMailSender mailSender;
+    private final SendGrid sendGrid;
 
     @Value("${vdf.app.base-url:http://localhost:5173}")
     private String baseUrl;
 
-    @Value("${spring.mail.username:}")
+    @Value("${sendgrid.from-email:noreply@sidbi.in}")
     private String fromEmail;
+
+    @Value("${sendgrid.from-name:SIDBI VDF Portal}")
+    private String fromName;
+
+    public EmailService(@Value("${sendgrid.api-key:}") String apiKey) {
+        this.sendGrid = new SendGrid(apiKey);
+    }
 
     public void sendPasswordSetupEmail(String toEmail, String name, String token) {
         String link = baseUrl + "/#/set-password/" + token;
@@ -48,14 +58,25 @@ public class EmailService {
         }
     }
 
-    private void sendHtmlEmail(String to, String subject, String htmlContent) throws MessagingException {
-        MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-        helper.setFrom(fromEmail);
-        helper.setTo(to);
-        helper.setSubject(subject);
-        helper.setText(htmlContent, true);
-        mailSender.send(message);
+    private void sendHtmlEmail(String to, String subject, String htmlContent) throws IOException {
+        Email from = new Email(fromEmail, fromName);
+        Email toEmail = new Email(to);
+        Content content = new Content("text/html", htmlContent);
+        Mail mail = new Mail(from, subject, toEmail, content);
+
+        Request request = new Request();
+        try {
+            request.setMethod(Method.POST);
+            request.setEndpoint("mail/send");
+            request.setBody(mail.build());
+            Response response = sendGrid.api(request);
+            
+            if (response.getStatusCode() >= 400) {
+                throw new IOException("SendGrid API error: " + response.getStatusCode() + " - " + response.getBody());
+            }
+        } catch (IOException ex) {
+            throw ex;
+        }
     }
 
     private String buildSetupEmailHtml(String name, String link) {
