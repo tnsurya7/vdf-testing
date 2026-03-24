@@ -28,19 +28,33 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final EmailService emailService;
 
-    private static List<SidbiRole> parseRoles(String raw, SidbiRole fallback) {
-        if (raw != null && !raw.isBlank()) {
-            return Arrays.stream(raw.split(","))
+    private static List<SidbiRole> parseRoles(UserAccount user) {
+        List<SidbiRole> roles = new java.util.ArrayList<>();
+        
+        // If user type is admin, add admin role
+        if (user.getUserType() != null && "admin".equalsIgnoreCase(user.getUserType().name())) {
+            roles.add(SidbiRole.admin);
+        }
+        
+        // Parse sidbi_roles (comma-separated)
+        if (user.getSidbiRoles() != null && !user.getSidbiRoles().isBlank()) {
+            Arrays.stream(user.getSidbiRoles().split(","))
                 .map(String::trim)
                 .filter(s -> !s.isEmpty())
                 .map(SidbiRole::valueOf)
-                .collect(Collectors.toList());
+                .forEach(roles::add);
         }
-        return fallback != null ? Collections.singletonList(fallback) : Collections.emptyList();
+        
+        // Add single sidbi_role if present
+        if (user.getSidbiRole() != null && !roles.contains(user.getSidbiRole())) {
+            roles.add(user.getSidbiRole());
+        }
+        
+        return roles;
     }
 
     private static AuthSessionDto toSessionDto(UserAccount user, SidbiRole activeRole) {
-        List<SidbiRole> roles = parseRoles(user.getSidbiRoles(), user.getSidbiRole());
+        List<SidbiRole> roles = parseRoles(user);
         return AuthSessionDto.builder()
             .email(user.getEmail())
             .sidbiRole(activeRole)
@@ -57,7 +71,7 @@ public class AuthService {
         if (!passwordEncoder.matches(password, user.getPasswordHash())) {
             throw new BadCredentialsException("Invalid email or password");
         }
-        List<SidbiRole> roles = parseRoles(user.getSidbiRoles(), user.getSidbiRole());
+        List<SidbiRole> roles = parseRoles(user);
         SidbiRole activeRole = roles.stream()
             .filter(r -> r != SidbiRole.admin)
             .findFirst()
@@ -77,7 +91,7 @@ public class AuthService {
     public AuthSessionDto sessionFromEmail(String email) {
         UserAccount user = userAccountRepository.findByEmailAndEnabledTrue(email)
             .orElseThrow(() -> new IllegalArgumentException("User not found"));
-        List<SidbiRole> roles = parseRoles(user.getSidbiRoles(), user.getSidbiRole());
+        List<SidbiRole> roles = parseRoles(user);
         SidbiRole activeRole = roles.stream()
             .filter(r -> r != SidbiRole.admin)
             .findFirst()
@@ -88,7 +102,7 @@ public class AuthService {
     public LoginResponse switchRole(String email, SidbiRole role) {
         UserAccount user = userAccountRepository.findByEmailAndEnabledTrue(email)
             .orElseThrow(() -> new IllegalArgumentException("User not found"));
-        List<SidbiRole> allowed = parseRoles(user.getSidbiRoles(), user.getSidbiRole());
+        List<SidbiRole> allowed = parseRoles(user);
         if (!allowed.contains(role)) {
             throw new IllegalArgumentException("User does not have role: " + role);
         }
